@@ -110,7 +110,7 @@ export default function HomePage() {
       <Head>
         <title>押神旅館</title>
       </Head>
-      <div className="w-screen h-screen overflow-hidden bg-black flex items-center justify-center">
+      <div className="w-screen h-screen overflow-hidden flex items-center justify-center" style={{ backgroundColor: '#000000' }}>
         {gameState === 'intro' && (
           <Image
             src={`/images/gametitle${slideIndex}.png`}
