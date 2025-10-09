@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 
@@ -13,6 +13,8 @@ export default function HomePage() {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
   const [nineKeyCount, setNineKeyCount] = useState(0)
   const [lastNineKeyTime, setLastNineKeyTime] = useState(0)
+  const [voicePlayed, setVoicePlayed] = useState(false)
+  const bgmRef = useRef<HTMLAudioElement | null>(null)
 
   const resetGame = () => {
     setGameState('intro')
@@ -23,12 +25,44 @@ export default function HomePage() {
     setIsCorrect(null)
     setNineKeyCount(0)
     setLastNineKeyTime(0)
+    setVoicePlayed(false)
   }
 
   const playSound = (soundFile: string) => {
     const audio = new Audio(`/sound/${soundFile}`)
     audio.play().catch(err => console.error('Audio play failed:', err))
   }
+
+  const startBGM = () => {
+    if (!bgmRef.current) {
+      bgmRef.current = new Audio('/sound/bgm.mp3')
+      bgmRef.current.loop = true
+      bgmRef.current.volume = 0.3 // 小さめの音量に設定
+    }
+    bgmRef.current.play().catch(err => console.error('BGM play failed:', err))
+  }
+
+  const stopBGM = () => {
+    if (bgmRef.current) {
+      bgmRef.current.pause()
+      bgmRef.current.currentTime = 0
+    }
+  }
+
+  // gameStateに応じてBGMを制御
+  useEffect(() => {
+    if (gameState === 'result') {
+      stopBGM()
+      playSound('fanfare.mp3')
+    } else {
+      startBGM()
+    }
+
+    // クリーンアップ関数
+    return () => {
+      stopBGM()
+    }
+  }, [gameState])
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -96,6 +130,9 @@ export default function HomePage() {
       } else {
         setGameState('result')
       }
+    } else if (gameState === 'result' && !voicePlayed) {
+      playSound('voice.wav')
+      setVoicePlayed(true)
     }
   }
 

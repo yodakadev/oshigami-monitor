@@ -2,7 +2,7 @@
   "private": true,
   "name": "oshigami-monitor",
   "description": "oshigami-monitor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "oshigami-monitor",
   "main": "app/background.js",
   "scripts": {
